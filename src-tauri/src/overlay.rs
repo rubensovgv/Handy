@@ -506,10 +506,11 @@ fn show_overlay_state(app_handle: &AppHandle, state: &str) {
     // inline when already on the main thread, so this never deadlocks.
     let handle = app_handle.clone();
     let state = state.to_string();
-    let _ = app_handle.run_on_main_thread(move || show_overlay_state_on_main(&handle, &state));
+    let _ =
+        app_handle.run_on_main_thread(move || show_overlay_state_on_main(&handle, &state, None));
 }
 
-fn show_overlay_state_on_main(app_handle: &AppHandle, state: &str) {
+fn show_overlay_state_on_main(app_handle: &AppHandle, state: &str, word: Option<&str>) {
     DICTIONARY_FEEDBACK_ACTIVE.store(state.starts_with("dictionary"), Ordering::SeqCst);
     // Size the overlay for this state (compact vs. streaming), then position it.
     let (width, height) = overlay_dimensions(state);
@@ -592,7 +593,14 @@ fn show_overlay_state_on_main(app_handle: &AppHandle, state: &str) {
             );
         }
 
-        let _ = overlay_window.emit("show-overlay", state);
+        if state.starts_with("dictionary") {
+            let _ = overlay_window.emit(
+                "show-overlay",
+                serde_json::json!({"state": state, "word": word}),
+            );
+        } else {
+            let _ = overlay_window.emit("show-overlay", state);
+        }
     }
 }
 
@@ -601,7 +609,7 @@ static DICTIONARY_FEEDBACK_ACTIVE: AtomicBool = AtomicBool::new(false);
 /// A brief, non-focusing status. Never replace an active dictation overlay, and
 /// never let the feedback timeout hide a recording that started afterwards.
 #[cfg(target_os = "macos")]
-pub fn show_dictionary_feedback(app: &AppHandle, status: &'static str) {
+pub fn show_dictionary_feedback(app: &AppHandle, status: &'static str, word: Option<String>) {
     let handle = app.clone();
     let _ = app.run_on_main_thread(move || {
         if let Some(window) = handle.get_webview_window("recording_overlay") {
@@ -611,7 +619,7 @@ pub fn show_dictionary_feedback(app: &AppHandle, status: &'static str) {
                 return;
             }
         }
-        show_overlay_state_on_main(&handle, status);
+        show_overlay_state_on_main(&handle, status, word.as_deref());
         let generation = OVERLAY_SHOW_GENERATION.load(Ordering::SeqCst);
         std::thread::spawn(move || {
             std::thread::sleep(std::time::Duration::from_secs(3));

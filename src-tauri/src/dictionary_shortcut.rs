@@ -61,6 +61,7 @@ pub fn capture(app: &AppHandle) {
         }
         let _reset = Reset;
         let result = selected_text().and_then(|text| normalize_selection(&text));
+        let feedback_word = result.as_ref().ok().cloned();
         let status = match result {
             Ok(word) => {
                 // Read settings only after selection capture has completed.
@@ -105,7 +106,7 @@ pub fn capture(app: &AppHandle) {
             Err(SelectionError::Permission) => "dictionaryPermission",
             Err(SelectionError::Unavailable) => "dictionaryUnavailable",
         };
-        crate::overlay::show_dictionary_feedback(&app, status);
+        crate::overlay::show_dictionary_feedback(&app, status, feedback_word);
     });
 }
 

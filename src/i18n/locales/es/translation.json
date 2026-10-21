@@ -713,8 +713,8 @@
   "overlay": {
     "transcribing": "Transcribiendo...",
     "processing": "Procesando...",
-    "dictionaryAdded": "Palabra añadida al diccionario",
-    "dictionaryDuplicate": "La palabra ya está en el diccionario",
+    "dictionaryAdded": "«{{word}}» añadido al diccionario",
+    "dictionaryDuplicate": "«{{word}}» ya está en el diccionario",
     "dictionaryEmpty": "Selecciona primero una palabra",
     "dictionaryTooLong": "Selecciona hasta 50 caracteres, sin párrafos",
     "dictionaryPermission": "Activa Accesibilidad para Handy",
