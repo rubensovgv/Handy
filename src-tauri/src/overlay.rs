@@ -55,7 +55,9 @@ const OVERLAY_STREAM_HEIGHT: f64 = 120.0;
 
 /// Overlay window size (logical) for a given UI state.
 fn overlay_dimensions(state: &str) -> (f64, f64) {
-    if state == "streaming" {
+    if state.starts_with("dictionary") {
+        (400.0, OVERLAY_HEIGHT)
+    } else if state == "streaming" {
         (OVERLAY_STREAM_WIDTH, OVERLAY_STREAM_HEIGHT)
     } else {
         (OVERLAY_WIDTH, OVERLAY_HEIGHT)
@@ -508,6 +510,7 @@ fn show_overlay_state(app_handle: &AppHandle, state: &str) {
 }
 
 fn show_overlay_state_on_main(app_handle: &AppHandle, state: &str) {
+    DICTIONARY_FEEDBACK_ACTIVE.store(state.starts_with("dictionary"), Ordering::SeqCst);
     // Size the overlay for this state (compact vs. streaming), then position it.
     let (width, height) = overlay_dimensions(state);
     if let Some(overlay_window) = app_handle.get_webview_window("recording_overlay") {
@@ -591,6 +594,35 @@ fn show_overlay_state_on_main(app_handle: &AppHandle, state: &str) {
 
         let _ = overlay_window.emit("show-overlay", state);
     }
+}
+
+static DICTIONARY_FEEDBACK_ACTIVE: AtomicBool = AtomicBool::new(false);
+
+/// A brief, non-focusing status. Never replace an active dictation overlay, and
+/// never let the feedback timeout hide a recording that started afterwards.
+#[cfg(target_os = "macos")]
+pub fn show_dictionary_feedback(app: &AppHandle, status: &'static str) {
+    let handle = app.clone();
+    let _ = app.run_on_main_thread(move || {
+        if let Some(window) = handle.get_webview_window("recording_overlay") {
+            if window.is_visible().unwrap_or(false)
+                && !DICTIONARY_FEEDBACK_ACTIVE.load(Ordering::SeqCst)
+            {
+                return;
+            }
+        }
+        show_overlay_state_on_main(&handle, status);
+        let generation = OVERLAY_SHOW_GENERATION.load(Ordering::SeqCst);
+        std::thread::spawn(move || {
+            std::thread::sleep(std::time::Duration::from_secs(3));
+            let app = handle.clone();
+            let _ = handle.run_on_main_thread(move || {
+                if OVERLAY_SHOW_GENERATION.load(Ordering::SeqCst) == generation {
+                    hide_recording_overlay(&app);
+                }
+            });
+        });
+    });
 }
 
 /// Notify the visible recording overlay that the input stream has delivered its

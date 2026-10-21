@@ -12,7 +12,20 @@ import type {
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
 
-type OverlayState = "recording" | "streaming" | "transcribing" | "processing";
+type DictionaryState =
+  | "dictionaryAdded"
+  | "dictionaryDuplicate"
+  | "dictionaryEmpty"
+  | "dictionaryTooLong"
+  | "dictionaryPermission"
+  | "dictionaryUnavailable"
+  | "dictionarySaveError";
+type OverlayState =
+  | "recording"
+  | "streaming"
+  | "transcribing"
+  | "processing"
+  | DictionaryState;
 
 // Number of reactive bars in the waveform (the simple, smoothed style shared by
 // every overlay form). Mic levels arrive as 16 FFT buckets; we take the first N.
@@ -131,7 +144,10 @@ const RecordingOverlay: React.FC = () => {
       };
     };
 
-    setupEventListeners();
+    const cleanup = setupEventListeners();
+    return () => {
+      void cleanup.then((dispose) => dispose());
+    };
   }, []);
 
   // Elapsed capture timer starts only once microphone samples are flowing.
@@ -158,6 +174,20 @@ const RecordingOverlay: React.FC = () => {
   }, [session]);
 
   if (!isVisible) return null;
+
+  if (state.startsWith("dictionary")) {
+    return (
+      <div dir={direction} className={`ov-stage ${position}`}>
+        <div
+          className="scard dictionary-feedback"
+          role="status"
+          aria-live="polite"
+        >
+          {t(`overlay.${state}`)}
+        </div>
+      </div>
+    );
+  }
 
   // Re-pin when the user is within ~a line of the bottom; unpin otherwise.
   const handleStreamScroll = () => {
