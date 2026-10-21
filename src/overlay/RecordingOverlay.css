@@ -469,3 +469,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* On-demand dictionary feedback keeps the focused editor and selection intact. */
+.scard.dictionary-feedback {
+  width: 370px;
+  min-height: 40px;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 20px;
+}

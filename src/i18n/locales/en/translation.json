@@ -144,6 +144,10 @@
           "transcribe_with_post_process": {
             "name": "Post-Processing Hotkey",
             "description": "Optional: A dedicated hotkey that always applies AI post-processing to your transcription."
+          },
+          "add_to_dictionary": {
+            "name": "Add selection to dictionary",
+            "description": "Select a corrected word or short phrase, then press this shortcut. Leaves the clipboard unchanged."
           }
         },
         "errors": {
@@ -694,7 +698,14 @@
   "overlay": {
     "transcribing": "Transcribing...",
     "processing": "Processing...",
-    "loadingModel": "Loading model..."
+    "loadingModel": "Loading model...",
+    "dictionaryAdded": "Added to dictionary",
+    "dictionaryDuplicate": "Already in the dictionary",
+    "dictionaryEmpty": "Select a word first",
+    "dictionaryTooLong": "Select up to 50 characters, without paragraphs",
+    "dictionaryPermission": "Enable Accessibility for Handy",
+    "dictionaryUnavailable": "This app does not expose the selected text",
+    "dictionarySaveError": "Could not save the word"
   },
   "secureInput": {
     "blockedWithCulprit_one": "{{name}} may be blocking 1 shortcut",

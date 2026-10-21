@@ -34,6 +34,14 @@ pub fn handle_shortcut_event(
 ) {
     let settings = get_settings(app);
 
+    #[cfg(target_os = "macos")]
+    if binding_id == "add_to_dictionary" {
+        if is_pressed {
+            crate::dictionary_shortcut::capture(app);
+        }
+        return;
+    }
+
     // Transcribe bindings are handled by the coordinator.
     if is_transcribe_binding(binding_id) {
         if let Some(coordinator) = app.try_state::<TranscriptionCoordinator>() {

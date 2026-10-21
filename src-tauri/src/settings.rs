@@ -947,6 +947,18 @@ pub fn get_default_settings() -> AppSettings {
             current_binding: default_post_process_shortcut.to_string(),
         },
     );
+    #[cfg(target_os = "macos")]
+    bindings.insert(
+        "add_to_dictionary".to_string(),
+        ShortcutBinding {
+            id: "add_to_dictionary".to_string(),
+            name: "Add selection to dictionary".to_string(),
+            description: "Select a corrected word or short phrase, then press this shortcut."
+                .to_string(),
+            default_binding: "ctrl+shift+space".to_string(),
+            current_binding: "ctrl+shift+space".to_string(),
+        },
+    );
     bindings.insert(
         "cancel".to_string(),
         ShortcutBinding {
@@ -1840,5 +1852,26 @@ mod tests {
         let out = format!("{:?}", map);
         assert!(!out.contains("secret"));
         assert!(out.contains("[REDACTED]"));
+    }
+}
+
+#[cfg(all(test, target_os = "macos"))]
+mod dictionary_shortcut_tests {
+    use super::*;
+    #[test]
+    fn requested_shortcuts_are_distinct_and_keep_dictation_unchanged() {
+        let defaults = get_default_settings();
+        assert_eq!(
+            defaults.bindings["add_to_dictionary"].current_binding,
+            "ctrl+shift+space"
+        );
+        assert_eq!(
+            defaults.bindings["transcribe_with_post_process"].current_binding,
+            "option+shift+space"
+        );
+        assert_eq!(
+            defaults.bindings["transcribe"].current_binding,
+            "option+space"
+        );
     }
 }
