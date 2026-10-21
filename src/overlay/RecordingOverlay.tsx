@@ -41,6 +41,7 @@ const SLOW_MODEL_LOAD_MS = 2000;
 const RecordingOverlay: React.FC = () => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
+  const [dictionaryWord, setDictionaryWord] = useState("");
   const [state, setState] = useState<OverlayState>("recording");
   // `Stream::play()` returning does not mean hardware callbacks are flowing.
   // Stay visually in an arming state until the backend processes the first
@@ -86,7 +87,14 @@ const RecordingOverlay: React.FC = () => {
   useEffect(() => {
     const setupEventListeners = async () => {
       const unlistenShow = await listen("show-overlay", async (event) => {
-        const overlayState = event.payload as OverlayState;
+        const payload = event.payload as
+          | OverlayState
+          | { state: DictionaryState; word?: string };
+        const overlayState =
+          typeof payload === "string" ? payload : payload.state;
+        setDictionaryWord(
+          typeof payload === "string" ? "" : (payload.word ?? ""),
+        );
         // Reset synchronously before settings I/O. A fast microphone can emit
         // recording-ready while the awaits below are in flight; resetting after
         // them would overwrite that event and leave the overlay stuck arming.
@@ -233,11 +241,17 @@ const RecordingOverlay: React.FC = () => {
     return (
       <div dir={direction} className={`ov-stage ${position}`}>
         <div
-          className="scard dictionary-feedback"
+          className="scard compact dictionary-feedback"
           role="status"
           aria-live="polite"
         >
-          {t(`overlay.${state}`)}
+          <span className="sdot dictionary-dot" aria-hidden="true" />
+          <span
+            className="dictionary-label"
+            title={t(`overlay.${state}`, { word: dictionaryWord })}
+          >
+            {t(`overlay.${state}`, { word: dictionaryWord })}
+          </span>
         </div>
       </div>
     );
