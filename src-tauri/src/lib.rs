@@ -9,9 +9,9 @@ mod chinese_script;
 pub mod cli;
 mod clipboard;
 mod commands;
-pub mod engine_supervisor;
 #[cfg(target_os = "macos")]
 mod dictionary_shortcut;
+pub mod engine_supervisor;
 mod helpers;
 mod input;
 mod llm_client;
