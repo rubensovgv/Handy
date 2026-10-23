@@ -92,8 +92,13 @@ impl HistoryManager {
 
         // Initialize database and run migrations synchronously
         manager.init_database()?;
+        crate::statistics::initialize(&manager.get_connection()?, &manager.recordings_dir)?;
 
         Ok(manager)
+    }
+
+    pub fn statistics(&self) -> Result<Vec<crate::statistics::StatisticsDay>> {
+        crate::statistics::read(&self.get_connection()?)
     }
 
     fn init_database(&self) -> Result<()> {
@@ -228,6 +233,7 @@ impl HistoryManager {
         let title = self.format_timestamp_title(timestamp);
 
         let conn = self.get_connection()?;
+        let conn = conn.unchecked_transaction()?;
         conn.execute(
             "INSERT INTO transcription_history (
                 file_name,
@@ -263,6 +269,14 @@ impl HistoryManager {
             post_process_requested,
         };
 
+        crate::statistics::record(
+            &conn,
+            entry.id,
+            entry.timestamp,
+            &entry.transcription_text,
+            &self.recordings_dir.join(&entry.file_name),
+        )?;
+        conn.commit()?;
         debug!("Saved history entry with id {}", entry.id);
 
         self.cleanup_old_entries()?;
@@ -288,6 +302,7 @@ impl HistoryManager {
         post_process_prompt: Option<String>,
     ) -> Result<HistoryEntry> {
         let conn = self.get_connection()?;
+        let conn = conn.unchecked_transaction()?;
         let updated = conn.execute(
             "UPDATE transcription_history
              SET transcription_text = ?1,
@@ -314,6 +329,14 @@ impl HistoryManager {
                 Self::map_history_entry,
             )?;
 
+        crate::statistics::record(
+            &conn,
+            entry.id,
+            entry.timestamp,
+            &entry.transcription_text,
+            &self.recordings_dir.join(&entry.file_name),
+        )?;
+        conn.commit()?;
         debug!("Updated transcription for history entry {}", id);
 
         if let Err(e) = (HistoryUpdatePayload::Updated {

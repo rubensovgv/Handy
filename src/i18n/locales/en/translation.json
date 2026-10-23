@@ -16,7 +16,8 @@
     "postProcessing": "Post Process",
     "history": "History",
     "debug": "Debug",
-    "about": "About"
+    "about": "About",
+    "statistics": "Statistics"
   },
   "onboarding": {
     "subtitle": "To get started, choose a transcription model",
@@ -706,5 +707,30 @@
     "learnMore": "How to fix",
     "recorderBlocked": "Can't record shortcuts right now — macOS Secure Input is blocking key events. Resolve the Secure Input warning first.",
     "dismiss": "Dismiss"
+  },
+  "statistics": {
+    "subtitle": "Your dictation activity, stored only on this computer.",
+    "total": "Total words dictated",
+    "month": "{{formatted}} words this month",
+    "comparison": "{{value}}% compared with the full previous month",
+    "noComparison": "Comparison will appear once the previous month has data.",
+    "wpm": "Words per minute",
+    "wpmNote": "Weighted average over available audio duration, including pauses.",
+    "sessions": "Completed dictations",
+    "minutes": "{{value}} minutes of measured audio",
+    "streak_one": "{{count}} day streak",
+    "streak_other": "{{count}} day streak",
+    "longest_one": "Longest streak: {{count}} day",
+    "longest_other": "Longest streak: {{count}} days",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
+    "day": "{{date}}: {{value}} words",
+    "less": "Less",
+    "more": "More",
+    "empty": "Your first dictation will appear here.",
+    "storage": "Counts words in the original transcription. Counters survive history deletion. Available history is imported; previously deleted dictations cannot be recovered. Speed requires audio. Stored locally in Handy’s app data folder (history.db).",
+    "error": "Could not load statistics.",
+    "retry": "Retry",
+    "loading": "Loading statistics…"
   }
 }

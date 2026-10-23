@@ -16,7 +16,8 @@
     "postProcessing": "Post proceso",
     "history": "Historial",
     "debug": "Depuración",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "statistics": "Estadísticas"
   },
   "onboarding": {
     "subtitle": "Para comenzar, elige un modelo de transcripción",
@@ -706,5 +707,30 @@
     "learnMore": "Cómo solucionarlo",
     "recorderBlocked": "Ahora mismo no se pueden grabar atajos: Secure Input de macOS está bloqueando los eventos de teclado. Resuelve primero el aviso de Secure Input.",
     "dismiss": "Descartar"
+  },
+  "statistics": {
+    "subtitle": "Tu actividad de dictado, guardada solo en este ordenador.",
+    "total": "Palabras dictadas en total",
+    "month": "{{formatted}} palabras este mes",
+    "comparison": "{{value}} % frente al mes anterior completo",
+    "noComparison": "La comparativa aparecerá cuando haya datos del mes anterior.",
+    "wpm": "Palabras por minuto",
+    "wpmNote": "Media ponderada por la duración del audio disponible, incluidas las pausas.",
+    "sessions": "Dictados completados",
+    "minutes": "{{value}} minutos de audio medido",
+    "streak_one": "{{count}} día de racha",
+    "streak_other": "{{count}} días de racha",
+    "longest_one": "Mejor racha: {{count}} día",
+    "longest_other": "Mejor racha: {{count}} días",
+    "previousYear": "Año anterior",
+    "nextYear": "Año siguiente",
+    "day": "{{date}}: {{value}} palabras",
+    "less": "Menos",
+    "more": "Más",
+    "empty": "Tu primer dictado aparecerá aquí.",
+    "storage": "Se cuentan las palabras de la transcripción original. Los contadores se conservan aunque borres el historial. Se recupera el historial disponible; los dictados ya eliminados no pueden reconstruirse. Sin audio, no se calcula la velocidad. Datos locales en la carpeta de datos de Handy (history.db).",
+    "error": "No se pudieron cargar las estadísticas.",
+    "retry": "Reintentar",
+    "loading": "Cargando estadísticas…"
   }
 }

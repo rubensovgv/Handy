@@ -152,3 +152,11 @@ pub async fn update_recording_retention_period(
 
     Ok(())
 }
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_dictation_statistics(
+    history_manager: State<'_, Arc<HistoryManager>>,
+) -> Result<Vec<crate::statistics::StatisticsDay>, String> {
+    history_manager.statistics().map_err(|e| e.to_string())
+}
